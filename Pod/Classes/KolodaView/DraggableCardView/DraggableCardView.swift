@@ -46,7 +46,7 @@ private let cardResetAnimationDuration: TimeInterval = 0.2
 internal var cardSwipeActionAnimationDuration: TimeInterval = DragSpeed.default.rawValue
 
 public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
-
+    
     //Drag animation constants
     public var rotationMax = defaultRotationMax
     public var rotationAngle = defaultRotationAngle
@@ -57,7 +57,7 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
             configureSwipeSpeed()
         }
     }
-
+    
     internal var dragBegin = false
     
     private var overlayView: OverlayView?
@@ -68,7 +68,7 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
     private var animationDirectionY: CGFloat = 1.0
     private var dragDistance = CGPoint.zero
     private var swipePercentageMargin: CGFloat = 0.0
-
+    
     
     //MARK: Lifecycle
     init() {
@@ -109,7 +109,7 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         tapGestureRecognizer.delegate = self
         tapGestureRecognizer.cancelsTouchesInView = false
         addGestureRecognizer(tapGestureRecognizer)
-
+        
         if let delegate = delegate {
             cardSwipeActionAnimationDuration = delegate.card(cardSwipeSpeed: self).rawValue
         }
@@ -129,11 +129,11 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         } else {
             self.addSubview(view)
         }
-
+        
         self.contentView = view
         configureContentView()
     }
-
+    
     private func configureOverlayView() {
         if let overlay = self.overlayView {
             overlay.translatesAutoresizingMaskIntoConstraints = false
@@ -231,18 +231,18 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         case .began:
             
             let firstTouchPoint = gestureRecognizer.location(in: self)
-//            let newAnchorPoint = CGPoint(x: firstTouchPoint.x / bounds.width, y: firstTouchPoint.y / bounds.height)
+            //            let newAnchorPoint = CGPoint(x: firstTouchPoint.x / bounds.width, y: firstTouchPoint.y / bounds.height)
             let newAnchorPoint = CGPoint(x: firstTouchPoint.x / bounds.width, y: 0)
             let oldPosition = CGPoint(x: bounds.size.width * layer.anchorPoint.x, y: bounds.size.height * layer.anchorPoint.y)
             let newPosition = CGPoint(x: bounds.size.width * newAnchorPoint.x, y: bounds.size.height * newAnchorPoint.y)
             layer.anchorPoint = newAnchorPoint
-//            layer.position = CGPoint(x: layer.position.x - oldPosition.x + newPosition.x, y: layer.position.y - oldPosition.y + newPosition.y)
+            //            layer.position = CGPoint(x: layer.position.x - oldPosition.x + newPosition.x, y: layer.position.y - oldPosition.y + newPosition.y)
             layer.position = CGPoint(x: layer.position.x - oldPosition.x + newPosition.x, y: layer.position.y - oldPosition.y)
             removeAnimations()
             
             dragBegin = true
             
-//            animationDirectionY = touchLocation.y >= frame.size.height / 2 ? -1.0 : 1.0
+            //            animationDirectionY = touchLocation.y >= frame.size.height / 2 ? -1.0 : 1.0
             animationDirectionY = -1.0
             layer.rasterizationScale = UIScreen.main.scale
             layer.shouldRasterize = true
@@ -262,11 +262,11 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
             let rotationAngle = animationDirectionY * self.rotationAngle * rotationStrength
             let scaleStrength = 1 - ((1 - scaleMin) * abs(rotationStrength))
             let scale = max(scaleStrength, scaleMin)
-
+            
             var transform = CATransform3DIdentity
             transform = CATransform3DScale(transform, scale, scale, 1)
             transform = CATransform3DRotate(transform, rotationAngle, 0, 0, 1)
-//            transform = CATransform3DTranslate(transform, dragDistance.x, dragDistance.y, 0)
+            //            transform = CATransform3DTranslate(transform, dragDistance.x, dragDistance.y, 0)
             transform = CATransform3DTranslate(transform, dragDistance.x, 0, 0)
             layer.transform = transform
             
@@ -308,57 +308,57 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         if let tableView = otherGestureRecognizer.view as? UITableView {
             self.tableView = tableView
             self.tableViewGesture = otherGestureRecognizer
-//            if (tableView.isDragging && tableView.isDecelerating)
-//            {
-//                print(panGestureRecognizer.velocity(in: self))
-//                if gestureRecognizer == panGestureRecognizer {
-//                    let velocity = panGestureRecognizer.velocity(in: self)
-//                    if (velocity.x > 0 || velocity.x < 0) {
-//                        otherGestureRecognizer.isEnabled = false
-//                        otherGestureRecognizer.isEnabled = true
-                        return true
-//                    } else {
-//////
-//                    }
-//                }
-//            }
+            //            if (tableView.isDragging && tableView.isDecelerating)
+            //            {
+            //                print(panGestureRecognizer.velocity(in: self))
+            //                if gestureRecognizer == panGestureRecognizer {
+            //                    let velocity = panGestureRecognizer.velocity(in: self)
+            //                    if (velocity.x > 0 || velocity.x < 0) {
+            //                        otherGestureRecognizer.isEnabled = false
+            //                        otherGestureRecognizer.isEnabled = true
+            return true
+            //                    } else {
+            //////
+            //                    }
+            //                }
+            //            }
         }
         return false
     }
-//
-//    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-////        if let tableView = otherGestureRecognizer.view as? UITableView {
-////            if (tableView.isDragging && tableView.isDecelerating)
-////            {
-////                tableView.setContentOffset(tableView.contentOffset, animated: false)
-////                return true
-////            }
-////        }
-////
-//        print(panGestureRecognizer.translation(in: self))
-//        if gestureRecognizer == panGestureRecognizer {
-//            let direction = panGestureRecognizer.translation(in: self)
-//            if (direction.x != 0) {
-//                otherGestureRecognizer.isEnabled = false
-//                otherGestureRecognizer.isEnabled = true
-//                return true
-//            } else {
-//                //
-//            }
-//        }
-//
-//        return false
-//    }
-//
-//    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        if let tableView = otherGestureRecognizer.view as? UITableView {
-//            if (tableView.isDragging)
-//            {
-//                return false
-//            }
-//        }
-//        return false
-//    }
+    //
+    //    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    ////        if let tableView = otherGestureRecognizer.view as? UITableView {
+    ////            if (tableView.isDragging && tableView.isDecelerating)
+    ////            {
+    ////                tableView.setContentOffset(tableView.contentOffset, animated: false)
+    ////                return true
+    ////            }
+    ////        }
+    ////
+    //        print(panGestureRecognizer.translation(in: self))
+    //        if gestureRecognizer == panGestureRecognizer {
+    //            let direction = panGestureRecognizer.translation(in: self)
+    //            if (direction.x != 0) {
+    //                otherGestureRecognizer.isEnabled = false
+    //                otherGestureRecognizer.isEnabled = true
+    //                return true
+    //            } else {
+    //                //
+    //            }
+    //        }
+    //
+    //        return false
+    //    }
+    //
+    //    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    //        if let tableView = otherGestureRecognizer.view as? UITableView {
+    //            if (tableView.isDragging)
+    //            {
+    //                return false
+    //            }
+    //        }
+    //        return false
+    //    }
     
     @objc func tapRecognized(_ recogznier: UITapGestureRecognizer) {
         delegate?.card(cardWasTapped: self)
@@ -372,6 +372,8 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
     
     private var dragDirection: SwipeResultDirection? {
         //find closest direction
+        //disable y direction
+        dragDistance = CGPoint.init(x: dragDistance.x, y: 0)
         let normalizedDragPoint = dragDistance.normalizedDistanceForSize(bounds.size)
         return directions.reduce((distance:CGFloat.infinity, direction:nil)) { closest, direction in
             let distance = direction.point.distanceTo(normalizedDragPoint)
@@ -379,7 +381,7 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
                 return (distance, direction)
             }
             return closest
-        }.direction
+            }.direction
     }
     
     private var dragPercentage: CGFloat {
