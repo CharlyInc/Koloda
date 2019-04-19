@@ -229,6 +229,10 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         
         switch gestureRecognizer.state {
         case .began:
+            if let tableView = self.tableView {
+                tableView.panGestureRecognizer.isEnabled = false
+                tableView.panGestureRecognizer.isEnabled = true
+            }
             
             let firstTouchPoint = gestureRecognizer.location(in: self)
             //            let newAnchorPoint = CGPoint(x: firstTouchPoint.x / bounds.width, y: firstTouchPoint.y / bounds.height)
@@ -249,14 +253,14 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
             delegate?.card(cardPanBegan: self)
             
         case .changed:
-            let velocity = panGestureRecognizer.velocity(in: self)
-            if (velocity.x > 0 || velocity.x < 0) {
-                if let tableView = self.tableView {
-                    tableView.setContentOffset(tableView.contentOffset, animated: false)
-                }
-                tableViewGesture?.isEnabled = false
-                tableViewGesture?.isEnabled = true
-            }
+//            let velocity = panGestureRecognizer.velocity(in: self)
+//            if fabs(velocity.y) > fabs(velocity.x) {
+//                if let tableView = self.tableView {
+//                    tableView.setContentOffset(tableView.contentOffset, animated: false)
+//                }
+//                tableViewGesture?.isEnabled = false
+//                tableViewGesture?.isEnabled = true
+//            }
             
             let rotationStrength = min(dragDistance.x / frame.width, rotationMax)
             let rotationAngle = animationDirectionY * self.rotationAngle * rotationStrength
@@ -299,7 +303,14 @@ public class DraggableCardView: UIView, UIGestureRecognizerDelegate {
         guard gestureRecognizer == panGestureRecognizer else {
             return true
         }
-        return delegate?.card(cardShouldDrag: self) ?? true
+        
+        let velocity = panGestureRecognizer.velocity(in: self)
+        print(velocity)
+        if fabs(velocity.y) < fabs(velocity.x) {
+            return delegate?.card(cardShouldDrag: self) ?? true
+        } else {
+            return false
+        }
     }
     
     var tableView:UITableView? = nil
